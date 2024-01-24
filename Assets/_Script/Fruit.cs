@@ -15,4 +15,9 @@ public class Fruit : MonoBehaviour
     {
         
     }
+
+
+    // 충돌처리
+
+
 }
