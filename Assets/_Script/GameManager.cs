@@ -55,31 +55,35 @@ public class GameManager : MonoBehaviour
 
     public void ChangeState(GameState newState)
     {
+        GameState preState = currentState;
         currentState = newState;
 
         // 상태 변경에 따른 추가 로직 (예: UI 업데이트, 게임 데이터 초기화 등)
         switch (currentState)
         {
             case GameState.MainMenu: // 메인 메뉴 로직
-                Time.timeScale = 1; // 게임 로직 일시 정지
+                Time.timeScale = 1; // 타임스케일 정상화
+                ResetData();
                 // SoundManager.Instance.PlayMainMenuMusic(); // 메인메뉴 배경음악 재생
                 break;
 
             case GameState.Playing: // 게임 시작 로직
-                Time.timeScale = 1; // 게임 로직 일시 정지
+                Time.timeScale = 1; // 타임스케일 정상화
+                if(preState != GameState.Paused) // 일시정지했다가 온 게 아니라면 데이터 리셋. 추후 나은 방안 마련
+                    ResetData();
                 // SoundManager.Instance.PlayGameMusic(); // 현재 사운드가 게임중 사운드가 아니라면 게임중 사운드로 전환, (희망사항)배속 x1
                 break;
 
             case GameState.Paused: // 일시 정지 관련 로직
-                Time.timeScale = 0; // 일시 정지 중 멈추기
-                // UIManager.Instance.ShowPauseMenu(); // 일시 정지 메뉴 활성화
+                Time.timeScale = 0; // 타임스케일 일시정지
+                UIManager.Instance.TogglePausedPanel(); // 일시 정지 메뉴 활성화
                 // SoundManager.Instance.PauseMusic(); // (희망사항) 필요 시 배경음악 일시 정지 또는 볼륨 감소
                 break;
 
             case GameState.GameOver: // 게임 종료 관련 로직
-                Time.timeScale = 0; // (필요 시 조율) 결과화면 중 멈추기
-                // UpdateHighScore(); // 최고 점수 업데이트 및 저장
-                // UIManager.Instance.ShowGameOverMenu(); // 게임 오버 UI 활성화
+                Time.timeScale = 0; // (필요 시 조율) 타임스케일 일시정지
+                UpdateHighScore(); // 최고 점수 업데이트 및 저장
+                UIManager.Instance.ToggleResultPanel(); // 게임 오버 UI 활성화
                 // SoundManager.Instance.PlayGameOverSound(); // 게임 오버 사운드 재생
                 break;
         }
@@ -100,14 +104,23 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene("MainScene");
     }
 
-    // 과일 떨구기(로직 당장 생각이 안남.. 이후 구현 예정)
+    // 게임 재시작을 위한 게임 데이터 초기화 메서드
+    public void ResetData()
+    {
+        currentPhase = 1;
+        tanghuluMade = 0;
+        highScore = PlayerPrefs.GetInt("HighScore", 0);
+        score = 0;
+    }
+
+    // TODO: 과일 떨구기
     public void StartDroppingFruits()
     {
         // 과일이 떨어지기 시작하는 로직
         // int currentPhase 에 따라 낙하하는 과일 종류 수에 반영
     }
 
-    // 목표 탕후루 생성 및 표시
+    // 목표 탕후루 생성 및 표시, TODO: 씬에 보여주기
     public void GenerateTargetTanghulu()
     {
         // 랜덤한 과일 {currentPhase + 2}종류를 선택하여 목표 탕후루를 생성하고 표시하는 로직
@@ -154,5 +167,16 @@ public class GameManager : MonoBehaviour
         score += 1; // 임시 작성
     }
 
-    // ...추가 게임 관리 로직들 작성
+    // 최고 점수 업데이트 및 저장
+    public void UpdateHighScore()
+    {
+        if(score > highScore)
+        {
+            highScore = score;
+            // 게임 종료시에도 로컬에 저장되도록 하는 메서드
+            PlayerPrefs.SetInt("HighScore", highScore);
+            PlayerPrefs.Save();
+        }
+    }
+
 }
