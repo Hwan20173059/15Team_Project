@@ -13,6 +13,26 @@ public class ButtonManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
+    }
+    public void StartGame()
+    {
+        GameManager.Instance.StartGame();
+    }
+    public void PauseGame()
+    {
+        GameManager.Instance.PauseGame();
+    }
+    public void BackMainMenu()
+    {
+        GameManager.Instance.BackMainMenu();
+    }
+    public void ResumeGame()
+    {
+        GameManager.Instance.ResumeGame();
+    }
+    public void RestartGame()
+    {
+        GameManager.Instance.RestartGame();
     }
 }

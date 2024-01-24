@@ -55,53 +55,84 @@ public class GameManager : MonoBehaviour
 
     public void ChangeState(GameState newState)
     {
-        GameState preState = currentState;
         currentState = newState;
 
-        // 상태 변경에 따른 추가 로직 (예: UI 업데이트, 게임 데이터 초기화 등)
+        // 상태 변경에 따른 추가 로직
         switch (currentState)
         {
             case GameState.MainMenu: // 메인 메뉴 로직
                 Time.timeScale = 1; // 타임스케일 정상화
-                ResetData();
                 // SoundManager.Instance.PlayMainMenuMusic(); // 메인메뉴 배경음악 재생
                 break;
 
             case GameState.Playing: // 게임 시작 로직
                 Time.timeScale = 1; // 타임스케일 정상화
-                if(preState != GameState.Paused) // 일시정지했다가 온 게 아니라면 데이터 리셋. 추후 나은 방안 마련
-                    ResetData();
                 // SoundManager.Instance.PlayGameMusic(); // 현재 사운드가 게임중 사운드가 아니라면 게임중 사운드로 전환, (희망사항)배속 x1
                 break;
 
             case GameState.Paused: // 일시 정지 관련 로직
                 Time.timeScale = 0; // 타임스케일 일시정지
-                UIManager.Instance.TogglePausedPanel(); // 일시 정지 메뉴 활성화
                 // SoundManager.Instance.PauseMusic(); // (희망사항) 필요 시 배경음악 일시 정지 또는 볼륨 감소
                 break;
 
             case GameState.GameOver: // 게임 종료 관련 로직
                 Time.timeScale = 0; // (필요 시 조율) 타임스케일 일시정지
-                UpdateHighScore(); // 최고 점수 업데이트 및 저장
-                UIManager.Instance.ToggleResultPanel(); // 게임 오버 UI 활성화
                 // SoundManager.Instance.PlayGameOverSound(); // 게임 오버 사운드 재생
                 break;
         }
     }
 
-    // 게임 시작 메서드 : 게임 시작 버튼이 눌렸을 때, ButtonManager에서 호출 바람.
+    // 게임시작 버튼이 눌렸을 때, ButtonManager에서 호출
     public void StartGame()
     {
+        ResetData();
         LoadMainScene();
-        ChangeState(GameState.Playing);
-
         StartDroppingFruits();
+        ChangeState(GameState.Playing);
+    }
+    // 일시정지 버튼이 눌렸을 때, ButtonManager에서 호출
+    public void PauseGame()
+    {
+        UIManager.Instance.TogglePausedPanel(); // 일시 정지 메뉴 토글
+        ChangeState(GameState.Paused);
+    }
+    // 이어하기 버튼이 눌렸을 때, ButtonManager에서 호출
+    public void ResumeGame()
+    {
+        UIManager.Instance.TogglePausedPanel(); // 일시 정지 메뉴 토글
+        ChangeState(GameState.Playing);
+    }
+    // 다시하기 버튼이 눌렸을 때, ButtonManager에서 호출
+    public void RestartGame()
+    {
+        ResetData();
+        LoadMainScene();
+        StartDroppingFruits();
+        ChangeState(GameState.Playing);
+    }
+    // 메인메뉴로 버튼이 눌렸을 때, ButtonManager에서 호출
+    public void BackMainMenu()
+    {
+        LoadTitleScene();
+        ChangeState(GameState.MainMenu);
+    }
+    // 게임 종료 조건 달성 시, GameManager에서 호출
+    public void GameOver()
+    {
+        UpdateHighScore(); // 최고 점수 업데이트 및 저장
+        UIManager.Instance.ToggleResultPanel(); // 게임 오버 UI 활성화
+        ChangeState(GameState.GameOver);
     }
 
     // MainScene 로드
     public void LoadMainScene()
     {
-        SceneManager.LoadScene("MainScene");
+        SceneManager.LoadScene("_MainScene");
+    }
+    // TitleScene 로드
+    public void LoadTitleScene()
+    {
+        SceneManager.LoadScene("_TitleScene");
     }
 
     // 게임 재시작을 위한 게임 데이터 초기화 메서드

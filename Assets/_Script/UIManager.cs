@@ -43,11 +43,11 @@ public class UIManager : MonoBehaviour
     private void FindAndAssignUIElements(Scene scene)
     {
         // 로드되는 씬 이름에 따라 UI를 로드
-        if (scene.name == "TitleScene")
+        if (scene.name == "_TitleScene")
         {
             settingsPanel = GameObject.Find("SettingUI");
         }
-        else if (scene.name == "MainScene")
+        else if (scene.name == "_MainScene")
         {
             pausedPanel = GameObject.Find("PauseUI");
             resultPanel = GameObject.Find("ScoreUI");
