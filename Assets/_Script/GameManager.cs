@@ -10,6 +10,7 @@ public enum GameState
     Playing,
     Paused,
     GameOver,
+    Setting,
 }
 
 public class GameManager : MonoBehaviour
@@ -79,6 +80,10 @@ public class GameManager : MonoBehaviour
                 Time.timeScale = 0; // (필요 시 조율) 타임스케일 일시정지
                 // SoundManager.Instance.PlayGameOverSound(); // 게임 오버 사운드 재생
                 break;
+
+            case GameState.Setting: // 설정(배경음, 효과음 조절) 관련 로직
+                Time.timeScale = 0;
+                break;
         }
     }
 
@@ -116,6 +121,12 @@ public class GameManager : MonoBehaviour
         LoadTitleScene();
         ChangeState(GameState.MainMenu);
     }
+    // 설정 버튼이 눌렀을때, ButtonManager에서 호출
+    public void SettingMenu()
+    {
+        UIManager.Instance.ToggleSettingsPanel();
+        ChangeState(GameState.Setting);
+    }
     // 게임 종료 조건 달성 시, GameManager에서 호출
     public void GameOver()
     {
@@ -127,7 +138,7 @@ public class GameManager : MonoBehaviour
     // MainScene 로드
     public void LoadMainScene()
     {
-        SceneManager.LoadScene("_MainScene");
+        SceneManager.LoadScene("Feat_SoundSlider_MainScene");
     }
     // TitleScene 로드
     public void LoadTitleScene()

@@ -8,9 +8,9 @@ public class UIManager : MonoBehaviour
     public static UIManager Instance { get; private set; }
 
     // 패널 참조를 위한 변수
-    private GameObject settingsPanel;
-    private GameObject pausedPanel;
-    private GameObject resultPanel;
+    public GameObject settingsPanel;
+    public GameObject pausedPanel;
+    public GameObject resultPanel;
 
     private void Awake()
     {
